@@ -7,5 +7,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
 
 find_package(SDL2 REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(glm REQUIRED)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)

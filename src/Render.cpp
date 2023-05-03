@@ -50,11 +50,43 @@ auto Render::Init() -> void
     this->m_glContext = SDL_GL_CreateContext(this->m_sdlWindow.get());
 
     SDL_GL_MakeCurrent(this->m_sdlWindow.get(), this->m_glContext);
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+
+    // Set VSYNC swap interval
     SDL_GL_SetSwapInterval(1);
+
+    // glEnable( GL_MULTISAMPLE );
+    //  glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+
+    std::cout << "Inits" << std::endl;
+
+    glewInit();
+
+    Block::InitVertices();
+
+    shader = std::make_shared<Shader>("../shader/vertex.glsl", "../shader/fragment.glsl");
+
+    textures["minecraft:grass"] = std::make_shared<Texture>("../texture/grass.jpg", GL_TEXTURE_2D);
 }
 
 auto Render::RenderThread() -> void
 {
+    std::cout << "RenderThread" << std::endl;
+
+    std::vector<Block *> blocks;
+    for (int i = 0; i < 16; i++)
+    {
+        for (int j = 0; j < 16; j++)
+        {
+            for (int k = 0; k < 256; k++)
+            {
+                blocks.push_back(new Block("minecraft:grass", glm::vec3(i, k, j)));
+            }
+        }
+    }
+
+    Camera *camera = new Camera();
 
     while (Game::GetInstance()->m_isRunning)
     {
@@ -65,14 +97,35 @@ auto Render::RenderThread() -> void
                 (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
                  event.window.windowID == SDL_GetWindowID(this->m_sdlWindow.get())))
                 delete Game::GetInstance();
+            camera->HandleMouse(event);
+            if (event.type == SDL_KEYDOWN)
+            {
+                camera->MoveCamera(event.key.keysym.scancode);
+            }
         }
+        glClearColor(0.f, 0.f, 0.f, 1.f);
 
         int w = 0, h = 0;
         SDL_GetWindowSize(this->m_sdlWindow.get(), &w, &h);
+        /*
+        std::cout << w << " " << h << std::endl;
+        glViewport(0, 0, (int)w, (int)h); */
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        CalculateFrameRate();
+        shader->use();
 
-        glViewport(0, 0, (int)w, (int)h);
-        glClearColor(0.f, 0.f, 1.f, 1.f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glm::mat4 view = camera->GetViewMatrix();
+        /* view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); */
+
+        glm::mat4 projection = camera->GetProjectionMatrix();
+        /* projection = glm::perspective(glm::radians(45.0f), static_cast<float>(w) / static_cast<float>(h), 0.1f, 100.0f); */
+
+        shader->setMat4("view", view);
+        shader->setMat4("projection", projection);
+
+        for (Block *block : blocks)
+            block->Render();
+
         SDL_GL_SwapWindow(this->m_sdlWindow.get());
     }
 }
