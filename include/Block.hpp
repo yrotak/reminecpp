@@ -7,6 +7,15 @@
 #include "Texture.hpp"
 #include "Game.hpp"
 
+enum EBlockSide {
+    NORTH,
+    SOUTH,
+    WEST,
+    EAST,
+    TOP,
+    BOTTOM
+};
+
 class Block
 {
 private:
@@ -16,17 +25,22 @@ private:
     glm::vec3 m_position;
 
     std::shared_ptr<Texture> m_texture;
-public:
 
-    static GLuint VBO, VAO;
+    bool m_isRendered;
+
+    GLuint VBO, VAO;
+public:
 
     Block(std::string identifier, glm::vec3 position);
     ~Block();
 
     auto Render() -> void;
 
-    static auto InitVertices() -> void;
-    static auto ReleaseVertices() -> void;
+    auto Update() -> void;
+
+    auto ReleaseVertices() -> void;
+
+    auto shouldSideBeRendered(EBlockSide blockSide) -> bool;
 };
 
 #endif

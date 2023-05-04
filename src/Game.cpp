@@ -26,6 +26,7 @@ auto Game::Run() -> void
 
 auto Game::PostInit() -> void
 {
+    m_currentWorld = std::make_unique<World>();
     this->m_render->RenderThread();
 }
 

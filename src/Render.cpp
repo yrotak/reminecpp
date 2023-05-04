@@ -63,8 +63,6 @@ auto Render::Init() -> void
 
     glewInit();
 
-    Block::InitVertices();
-
     shader = std::make_shared<Shader>("../shader/vertex.glsl", "../shader/fragment.glsl");
 
     textures["minecraft:grass"] = std::make_shared<Texture>("../texture/grass.jpg", GL_TEXTURE_2D);
@@ -74,19 +72,24 @@ auto Render::RenderThread() -> void
 {
     std::cout << "RenderThread" << std::endl;
 
-    std::vector<Block *> blocks;
     for (int i = 0; i < 16; i++)
     {
         for (int j = 0; j < 16; j++)
         {
-            for (int k = 0; k < 256; k++)
+            for (int k = 0; k < 16; k++)
             {
-                blocks.push_back(new Block("minecraft:grass", glm::vec3(i, k, j)));
+                Game::GetInstance()->m_currentWorld->setBlock(glm::vec3(i, k, j), "minecraft:grass");
             }
         }
     }
 
     Camera *camera = new Camera();
+
+    for (const auto &[pos, block] : Game::GetInstance()->m_currentWorld->getBlocks())
+    {
+        block->Update();
+    }
+    std::cout << "End update" << std::endl;
 
     while (Game::GetInstance()->m_isRunning)
     {
@@ -107,6 +110,7 @@ auto Render::RenderThread() -> void
 
         int w = 0, h = 0;
         SDL_GetWindowSize(this->m_sdlWindow.get(), &w, &h);
+        camera->UpdateProjection(w, h);
         /*
         std::cout << w << " " << h << std::endl;
         glViewport(0, 0, (int)w, (int)h); */
@@ -123,8 +127,17 @@ auto Render::RenderThread() -> void
         shader->setMat4("view", view);
         shader->setMat4("projection", projection);
 
-        for (Block *block : blocks)
-            block->Render();
+        /*         for (Block *block : blocks)
+                    block->Render(); */
+                    static bool a = true;
+        for (const auto &[pos, block] : Game::GetInstance()->m_currentWorld->getBlocks())
+        {
+            if(!a)
+                std::cout << "render for " << block << " " << pos.x << ", " << pos.y << ", " << pos.z << std::endl;
+            if(block != nullptr)
+                block->Render();
+        }
+        a = true;
 
         SDL_GL_SwapWindow(this->m_sdlWindow.get());
     }

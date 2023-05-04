@@ -5,8 +5,10 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include "Render.hpp"
+#include "World.hpp"
 
 class Render;
+class World;
 
 class Game
 {
@@ -18,6 +20,9 @@ protected:
 public:
 
     std::unique_ptr<Render> m_render;
+    std::unique_ptr<World> m_currentWorld;
+
+
     bool m_isRunning = false;
 
     Game(Game &other) = delete;
