@@ -5,5 +5,5 @@ file(GLOB_RECURSE HEADERS *.hpp *.h *.inl)
 
 add_executable(game ${SOURCES} ${HEADERS})
 
-target_include_directories(game PRIVATE ${SDL2_INCLUDE_DIRS})
-target_link_libraries(game PRIVATE SDL2::SDL2 SDL2::SDL2main OpenGL::GL GLEW::GLEW glm::glm)
+target_include_directories(game PRIVATE ${SDL2_INCLUDE_DIRS} ${SDL2_NET_INCLUDE_DIRS})
+target_link_libraries(game PRIVATE SDL2::SDL2 SDL2::SDL2main SDL2_net OpenGL::GL GLEW::GLEW glm::glm)

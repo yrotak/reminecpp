@@ -65,7 +65,7 @@ auto Render::Init() -> void
 
     shader = std::make_shared<Shader>("../shader/vertex.glsl", "../shader/fragment.glsl");
 
-    textures["minecraft:grass"] = std::make_shared<Texture>("../texture/grass.jpg", GL_TEXTURE_2D);
+    textures["minecraft:grass"] = std::make_shared<Texture>("../texture/missing.jpg", GL_TEXTURE_2D);
 }
 
 auto Render::RenderThread() -> void
@@ -89,7 +89,6 @@ auto Render::RenderThread() -> void
     {
         block->Update();
     }
-    std::cout << "End update" << std::endl;
 
     while (Game::GetInstance()->m_isRunning)
     {
@@ -129,15 +128,11 @@ auto Render::RenderThread() -> void
 
         /*         for (Block *block : blocks)
                     block->Render(); */
-                    static bool a = true;
         for (const auto &[pos, block] : Game::GetInstance()->m_currentWorld->getBlocks())
         {
-            if(!a)
-                std::cout << "render for " << block << " " << pos.x << ", " << pos.y << ", " << pos.z << std::endl;
             if(block != nullptr)
                 block->Render();
         }
-        a = true;
 
         SDL_GL_SwapWindow(this->m_sdlWindow.get());
     }

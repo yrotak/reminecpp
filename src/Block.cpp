@@ -197,48 +197,6 @@ auto Block::Update() -> void
             1.0f,
         }};
 
-    /* float vertices[] = {
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
-        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-
-        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f}; */
     m_isRendered = false;
     for (int i = 0; i < 6; i++)
     {
@@ -282,27 +240,21 @@ auto Block::shouldSideBeRendered(EBlockSide blockSide) -> bool
     switch (blockSide)
     {
     case NORTH:
-        std::cout << "north" << std::endl;
         checkingSide = m_position + glm::vec3(0, 0, 1);
         break;
     case SOUTH:
-        std::cout << "SOUTH" << std::endl;
         checkingSide = m_position + glm::vec3(0, 0, -1);
         break;
     case EAST:
-        std::cout << "EAST" << std::endl;
         checkingSide = m_position + glm::vec3(1, 0, 0);
         break;
     case WEST:
-        std::cout << "WEST" << std::endl;
         checkingSide = m_position + glm::vec3(-1, 0, 0);
         break;
     case TOP:
-        std::cout << "TOP" << std::endl;
         checkingSide = m_position + glm::vec3(0, 1, 0);
         break;
     case BOTTOM:
-        std::cout << "BOTTOM" << std::endl;
         checkingSide = m_position + glm::vec3(0, -1, 0);
         break;
     default:
