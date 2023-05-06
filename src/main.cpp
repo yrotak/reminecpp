@@ -1,18 +1,9 @@
-#pragma execution_character_set("utf-8")
-
 #include <iostream>
 #include "Game.hpp"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_net.h>
-
-#include "PacketDecoder.hpp"
-#include "packets/CPacketHandshake.hpp"
-#include "packets/CPacketLoginStart.hpp"
-#include "packets/CPacketEncryptionRequest.hpp"
 
 auto main(void) -> int
 {
-    if (SDL_Init(0) == -1)
+    /* if (SDL_Init(0) == -1)
     {
         printf("SDL_Init: %s\n", SDL_GetError());
         exit(1);
@@ -77,7 +68,7 @@ auto main(void) -> int
         std:copy(packet3.pubkey.begin(), packet3.pubkey.end(), std::ostream_iterator<int>(std::cout, ", "));
         std::cout << std::endl;
     }
-    
+     */
 /* 
     while (1)
     {
@@ -105,9 +96,9 @@ auto main(void) -> int
         }
     } */
 
-    SDLNet_TCP_Close(tcpsock);
+    /* SDLNet_TCP_Close(tcpsock); */
 
-    /* Game::Run(); */
+    Game::Run();
 
     return 0;
 }

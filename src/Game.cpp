@@ -2,7 +2,7 @@
 
 Game *Game::singleton_ = nullptr;
 
-Game::Game() : m_render(std::make_unique<Render>())
+Game::Game() : m_render(std::make_unique<Render>()), m_network(std::make_unique<Network>())
 {
     std::cout << "Game constructor" << std::endl;
     this->m_isRunning = true;

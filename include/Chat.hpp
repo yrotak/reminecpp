@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include "json.hpp"
+#include <nlohmann/json.hpp>
 
 struct ClickEvent {
 	enum ActionType {

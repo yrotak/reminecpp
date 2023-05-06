@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 #include "Render.hpp"
 #include "World.hpp"
+#include "Network.hpp"
 
 class Render;
 class World;
@@ -20,6 +21,7 @@ protected:
 public:
 
     std::unique_ptr<Render> m_render;
+    std::unique_ptr<Network> m_network;
     std::unique_ptr<World> m_currentWorld;
 
 
