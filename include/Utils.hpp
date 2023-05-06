@@ -2,8 +2,6 @@
 #define UTILS_HPP
 #include <vector>
 
-using Uuid = std::vector<unsigned char>;
-
 template<class T>
 void endswap(T *objp) {
     unsigned char *memp = reinterpret_cast<unsigned char *>(objp);

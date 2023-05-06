@@ -5,6 +5,11 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_net.h>
 
+#include "PacketDecoder.hpp"
+#include "packets/CPacketHandshake.hpp"
+#include "packets/CPacketLoginStart.hpp"
+#include "packets/CPacketEncryptionRequest.hpp"
+
 auto main(void) -> int
 {
     if (SDL_Init(0) == -1)
@@ -34,34 +39,43 @@ auto main(void) -> int
         exit(2);
     }
 
+    CPacketHandshake packet;
 
-    unsigned char data[(5*sizeof(__int32_t))+sizeof(unsigned short)+254] = {};
-    __int32_t size = (4*sizeof(__int32_t))+sizeof(unsigned short)+254;
-    __int32_t packetid = 0;
-    __int32_t sizeofstring = 255;
-    char address[254] = "127.0.0.1";
-    __int32_t protocolver = 762;
-    unsigned short port = 25565;
-    __int32_t nextstate = 1;
-    
+    packet.protocolVersion = 762;
+    packet.serverAddress = "127.0.0.1";
+    packet.serverPort = 25565;
+    packet.nextState = 2;
 
-    memcpy(data, &size, sizeof(__int32_t));
-    memcpy(data, &packetid, sizeof(__int32_t));
-    memcpy(data, &sizeofstring, sizeof(__int32_t));
-    memcpy(data, &address, sizeof(address));
-    memcpy(data, &protocolver, sizeof(__int32_t));
-    memcpy(data, &port, sizeof(unsigned short));
-    memcpy(data, &nextstate, sizeof(__int32_t));
+    std::vector<unsigned char> v = packet.GetData();
 
-    int result = SDLNet_TCP_Send(tcpsock, data, sizeof(data));
+    int result = SDLNet_TCP_Send(tcpsock, v.data(), v.size());
+
+    CPacketLoginStart packet2;
+    packet2.username = "DrayNeur";
+    packet2.hasUUID = true;
+    packet2.uuid = {0xe4, 0xcc, 0x4a, 0xcc, 0xf3, 0x9f, 0x4b, 0xf5, 0x9d, 0xfe, 0x88, 0x72, 0xaa, 0x84, 0x0a, 0x5d};
+
+    v=packet2.GetData();
+
+    result = SDLNet_TCP_Send(tcpsock, v.data(), v.size());
 
 
     while (true)
     {
-        char buffer[1024];
+        unsigned char buffer[1024];
         int a = SDLNet_TCP_Recv(tcpsock, buffer, 1024);
-        if(a > 0)
-            std::cout << buffer << std::endl;
+        
+        PacketDecoder packetdec = PacketDecoder(buffer, sizeof(buffer));
+        int packetsize = packetdec.ReadVarInt();
+        int packetid = packetdec.ReadVarInt();
+        CPacketEncryptionRequest packet3;
+        packet3.FromPacketDecoder(packetdec);
+
+        std::cout << packet3.pubkeylength << std::endl;
+
+        std::cout << std::hex;
+        std:copy(packet3.pubkey.begin(), packet3.pubkey.end(), std::ostream_iterator<int>(std::cout, ", "));
+        std::cout << std::endl;
     }
     
 /* 
