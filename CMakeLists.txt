@@ -10,5 +10,6 @@ find_package(SDL2_net REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
+find_package(CURL REQUIRED)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)

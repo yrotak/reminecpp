@@ -1,10 +1,8 @@
 #ifndef PACKET_HPP
 #define PACKET_HPP
 
-#include <iostream>
-#include <vector>
-#include <glm/glm.hpp>
-#include "Stream.hpp"
+#include "stdafx.h"
+
 #include "Slot.hpp"
 #include "Utils.hpp"
 #include "Chat.hpp"

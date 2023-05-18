@@ -82,8 +82,8 @@ auto Render::RenderThread() -> void
             }
         }
     }
-
-    Camera *camera = new Camera();
+/* 
+    Camera *camera = new Camera(); */
 
     for (const auto &[pos, block] : Game::GetInstance()->m_currentWorld->getBlocks())
     {
@@ -99,17 +99,17 @@ auto Render::RenderThread() -> void
                 (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE &&
                  event.window.windowID == SDL_GetWindowID(this->m_sdlWindow.get())))
                 delete Game::GetInstance();
-            camera->HandleMouse(event);
+            /* camera->HandleMouse(event);
             if (event.type == SDL_KEYDOWN)
             {
                 camera->MoveCamera(event.key.keysym.scancode);
-            }
+            } */
         }
         glClearColor(0.f, 0.f, 0.f, 1.f);
 
         int w = 0, h = 0;
         SDL_GetWindowSize(this->m_sdlWindow.get(), &w, &h);
-        camera->UpdateProjection(w, h);
+        /* camera->UpdateProjection(w, h); */
         /*
         std::cout << w << " " << h << std::endl;
         glViewport(0, 0, (int)w, (int)h); */
@@ -117,11 +117,11 @@ auto Render::RenderThread() -> void
         CalculateFrameRate();
         shader->use();
 
-        glm::mat4 view = camera->GetViewMatrix();
-        /* view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); */
+        glm::mat4 view = glm::mat4(0)/* camera->GetViewMatrix() */;
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 
-        glm::mat4 projection = camera->GetProjectionMatrix();
-        /* projection = glm::perspective(glm::radians(45.0f), static_cast<float>(w) / static_cast<float>(h), 0.1f, 100.0f); */
+        glm::mat4 projection = glm::mat4(0)/* camera->GetProjectionMatrix() */;
+        projection = glm::perspective(glm::radians(45.0f), static_cast<float>(w) / static_cast<float>(h), 0.1f, 100.0f);
 
         shader->setMat4("view", view);
         shader->setMat4("projection", projection);

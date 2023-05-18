@@ -1,14 +1,7 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
 
-
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-
-#include <GL/glew.h>
-#include <glm/glm.hpp>
+#include "stdafx.h"
 
 class Shader {
 public:

@@ -1,5 +1,7 @@
 #include "PacketDecoder.hpp"
 
+const int MAX_VARINT_LENGTH = 5;
+
 PacketDecoder::PacketDecoder()
 {
 }

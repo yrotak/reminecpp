@@ -1,26 +1,14 @@
 #ifndef RENDER_HPP
 #define RENDER_HPP
 
-#include <GL/glew.h>
+#include "stdafx.h"
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-#include <iostream>
-#include <memory>
 #include "Game.hpp"
-#include <fstream>
-#include <sstream>
-#include <vector>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <map>
-#include <chrono>
 
 #include "Shader.hpp"
 #include "Texture.hpp"
 #include "Block.hpp"
-#include "Camera.hpp"
+
 
 typedef std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> SDLWindowPtr;
 class Render

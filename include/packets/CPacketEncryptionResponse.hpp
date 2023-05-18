@@ -1,10 +1,10 @@
-#ifndef CPACKETLOGINSTART_HPP
-#define CPACKETLOGINSTART_HPP
+#ifndef CPACKETENCRYPTIONRESPONSE_HPP
+#define CPACKETENCRYPTIONRESPONSE_HPP
 
 #include "IPacket.hpp"
 #include "PacketDecoder.hpp"
 
-class CPacketLoginStart : IPacket
+class CPacketEncryptionResponse : IPacket
 {
 public:
 
@@ -13,9 +13,10 @@ public:
 
     auto GetPacketId() -> int override;
 
-    std::string username;
-    bool hasUUID;
-    std::vector<unsigned char> uuid;
+    int sharedsecretlength;
+    std::vector<unsigned char> sharedsecret;
+    int veriftokenlength;
+    std::vector<unsigned char> veriftoken;
 };
 
 #endif

@@ -1,7 +1,6 @@
 #ifndef CPACKETENCRYPTIONREQUEST_HPP
 #define CPACKETENCRYPTIONREQUEST_HPP
 
-#include <iostream>
 #include "IPacket.hpp"
 #include "PacketDecoder.hpp"
 

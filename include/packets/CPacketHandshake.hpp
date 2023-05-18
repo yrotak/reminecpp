@@ -1,7 +1,6 @@
 #ifndef CPACKETHANDSHAKE_HPP
 #define CPACKETHANDSHAKE_HPP
 
-#include <iostream>
 #include "IPacket.hpp"
 #include "PacketDecoder.hpp"
 

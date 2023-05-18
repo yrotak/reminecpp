@@ -1,9 +1,8 @@
 #ifndef BLOCK_HPP
 #define BLOCK_HPP
 
-#include <iostream>
-#include <glm/glm.hpp>
-#include <memory>
+#include "stdafx.h"
+
 #include "Texture.hpp"
 #include "Game.hpp"
 

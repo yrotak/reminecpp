@@ -1,8 +1,6 @@
 #ifndef IPACKET_HPP
 #define IPACKET_HPP
 
-#include <vector>
-
 #include "PacketDecoder.hpp"
 
 enum EPacketNameLoginSB {

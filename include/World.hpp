@@ -1,13 +1,8 @@
 #ifndef WORLD_HPP
 #define WORLD_HPP
 
-#include <unordered_map>
+#include "stdafx.h"
 
-#include <glm/glm.hpp>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/hash.hpp>
-
-#include <optional>
 #include "Block.hpp"
 
 

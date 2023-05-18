@@ -88,6 +88,7 @@ Component RecurParseComponent(json j) {
 
 Chat::Chat(const std::string &json) {
 	static const size_t s = sizeof(Component);
+	std::cout << json << std::endl;
 	nlohmann::json j = nlohmann::json::parse(json);
 	volatile size_t f = s + 1;
 	component = RecurParseComponent(j);

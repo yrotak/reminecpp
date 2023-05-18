@@ -1,9 +1,7 @@
 #ifndef TEXTURE_HPP
 #define TEXTURE_HPP
 
-#include <iostream>
-
-#include <GL/glew.h>
+#include "stdafx.h"
 
 class Texture {
 public:

@@ -1,10 +1,11 @@
-#ifndef CPACKETLOGINSTART_HPP
-#define CPACKETLOGINSTART_HPP
+#ifndef CPACKETDISCONNECT_HPP
+#define CPACKETDISCONNECT_HPP
 
 #include "IPacket.hpp"
 #include "PacketDecoder.hpp"
+#include "Chat.hpp"
 
-class CPacketLoginStart : IPacket
+class CPacketDisconnect : IPacket
 {
 public:
 
@@ -13,9 +14,8 @@ public:
 
     auto GetPacketId() -> int override;
 
-    std::string username;
-    bool hasUUID;
-    std::vector<unsigned char> uuid;
+    Chat reason;
+
 };
 
 #endif

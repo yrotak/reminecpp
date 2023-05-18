@@ -1,15 +1,18 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include <memory>
-#include <iostream>
-#include <SDL2/SDL.h>
+#include "stdafx.h"
+
+#include "Network.hpp"
 #include "Render.hpp"
 #include "World.hpp"
-#include "Network.hpp"
+#include "ConfigManager.hpp"
+#include "Authentification.hpp"
 
 class Render;
 class World;
+class Network;
+class Authentification;
 
 class Game
 {
@@ -23,6 +26,8 @@ public:
     std::unique_ptr<Render> m_render;
     std::unique_ptr<Network> m_network;
     std::unique_ptr<World> m_currentWorld;
+    std::unique_ptr<ConfigManager> m_configManager;
+    std::unique_ptr<Authentification> m_auth;
 
 
     bool m_isRunning = false;

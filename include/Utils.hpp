@@ -1,6 +1,7 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
-#include <vector>
+
+#include "stdafx.h"
 
 template<class T>
 void endswap(T *objp) {

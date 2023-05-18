@@ -1,9 +1,7 @@
 #ifndef CHAT_HPP
 #define CHAT_HPP
 
-#include <vector>
-#include <string>
-#include <nlohmann/json.hpp>
+#include "stdafx.h"
 
 struct ClickEvent {
 	enum ActionType {
