@@ -34,6 +34,10 @@
 #include <cryptopp/rsa.h>
 #include <cryptopp/hex.h>
 
+#include <openssl/aes.h>
+#include <openssl/rsa.h>
+#include <openssl/x509.h>
+
 #include <curl/curl.h>
 
 #ifdef _WIN32

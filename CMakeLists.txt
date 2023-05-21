@@ -11,5 +11,6 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm REQUIRED)
 find_package(CURL REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)

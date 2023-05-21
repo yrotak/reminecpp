@@ -252,12 +252,13 @@ auto Authentification::LoginWithMicrosoft() -> void
 
 auto Authentification::JoinServer(std::string hash) -> void
 {
+    std::cout << "Setting up profile for " << m_username << " " << m_uuid << std::endl;
     json jsondata = {
         {"accessToken", m_accesstoken},
         {"selectedProfile", m_uuid},
         {"serverId", hash},
     };
-    PostData(
+    std::string result = PostData(
         "https://sessionserver.mojang.com/session/minecraft/join",
         "application/json",
 

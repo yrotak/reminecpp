@@ -16,7 +16,7 @@ auto Network::ConnectToServer(std::string hostname, int port) -> void
 {
     std::cout << "Connecting to " << hostname << std::endl;
 
-    Game* gameInstance = Game::GetInstance();
+    Game *gameInstance = Game::GetInstance();
     if (SDLNet_ResolveHost(&ip, hostname.c_str(), port) == -1)
     {
         printf("SDLNet_ResolveHost: %s\n", SDLNet_GetError());
@@ -92,6 +92,7 @@ auto Network::ConnectToServer(std::string hostname, int port) -> void
             break;
         case EPacketNameLoginCB::SetCompression:
             /* code */
+            std::cout << "Compression not implemented" << std::endl;
             break;
         default:
             break;
@@ -109,5 +110,10 @@ auto Network::Receive() -> std::vector<unsigned char>
     int res = SDLNet_TCP_Recv(tcpsock, buffer, sizeof(buffer));
     if (res == -1)
         std::cout << SDLNet_GetError() << std::endl;
-    return std::vector<unsigned char>(buffer, buffer + sizeof(buffer));
+    if (!m_isEncrypted)
+    {
+        return std::vector<unsigned char>(buffer, buffer + sizeof(buffer));
+    } else {
+        return m_cryptography->DecryptAES(std::vector<unsigned char>(buffer, buffer + sizeof(buffer)));
+    }
 }

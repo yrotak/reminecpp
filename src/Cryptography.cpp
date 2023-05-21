@@ -12,6 +12,20 @@ auto Cryptography::GenerateKey() -> void
 {
     CryptoPP::AutoSeededRandomPool prng;
     prng.GenerateBlock(key, sizeof(key));
+
+    if (!(m_EncryptCTX = EVP_CIPHER_CTX_new()))
+        std::cout << "EVP_CIPHER_CTX_new m_EncryptCTX failed" << std::endl;
+
+    if (!(EVP_EncryptInit_ex(m_EncryptCTX, EVP_aes_128_cfb8(), nullptr, key, key)))
+        std::cout << "EVP_EncryptInit_ex m_EncryptCTX failed" << std::endl;
+
+    if (!(m_DecryptCTX = EVP_CIPHER_CTX_new()))
+        std::cout << "EVP_CIPHER_CTX_new m_DecryptCTX failed" << std::endl;
+
+    if (!(EVP_DecryptInit_ex(m_DecryptCTX, EVP_aes_128_cfb8(), nullptr, key, key)))
+        std::cout << "EVP_DecryptInit_ex m_DecryptCTX failed" << std::endl;
+
+    m_BlockSize = EVP_CIPHER_block_size(EVP_aes_128_cfb8());
 }
 
 auto Cryptography::SetPublicKey(std::vector<unsigned char> publickey) -> void
@@ -23,17 +37,22 @@ auto Cryptography::GetEncryptedSharedSecret() -> std::vector<unsigned char>
 {
     return EncryptRSA(std::vector<unsigned char>(key, key + sizeof(key)));
 }
-void performTwosCompliment(unsigned char *buffer, int length) {
+void performTwosCompliment(unsigned char *buffer, int length)
+{
     bool carry = true;
     int i;
     unsigned char newByte, value;
-    for (i = length - 1; i >= 0; --i) {
+    for (i = length - 1; i >= 0; --i)
+    {
         value = buffer[i];
         newByte = ~value & 0xff;
-        if (carry) {
+        if (carry)
+        {
             carry = newByte == 0xff;
             buffer[i] = newByte + 1;
-        } else {
+        }
+        else
+        {
             buffer[i] = newByte;
         }
     }
@@ -53,16 +72,19 @@ auto Cryptography::GenerateAuthHash(std::string serverid) -> std::string
 
     hash.Final((CryptoPP::byte *)digest);
     bool negative = static_cast<int>(digest[0]) < 0;
-    if (negative) {
+    if (negative)
+    {
         performTwosCompliment(digest, sizeof(digest));
     }
     char digest_final[sizeof(digest) * 2 + 1];
-    for (int i = 0; i < sizeof(digest); i++) {
+    for (int i = 0; i < sizeof(digest); i++)
+    {
         sprintf(&digest_final[i * 2], "%02x", static_cast<unsigned int>(digest[i]));
     }
     std::string result(digest_final);
     result.erase(0, result.find_first_not_of('0'));
-    if (negative) {
+    if (negative)
+    {
         result = "-" + result;
     }
     return result;
@@ -84,29 +106,26 @@ auto Cryptography::EncryptRSA(std::vector<unsigned char> data) -> std::vector<un
     return std::vector<unsigned char>(buffer.begin(), buffer.end());
 }
 
-auto Cryptography::EncryptData(std::vector<unsigned char> data) -> std::vector<unsigned char>
+auto Cryptography::EncryptAES(std::vector<unsigned char> data) -> std::vector<unsigned char>
 {
-    std::string plain(data.begin(), data.end());
-    std::string cipher;
-    std::string output;
 
-    try
-    {
-        CryptoPP::CFB_Mode<CryptoPP::AES>::Encryption e(key, sizeof(key), key);
+    std::vector<unsigned char> result;
+    int size = 0;
 
-        CryptoPP::StringSource(plain, true,
-                               new CryptoPP::StreamTransformationFilter(e,
-                                                                        new CryptoPP::StringSink(cipher)) // StreamTransformationFilter
-        );                                                                                                // StringSource
-    }
-    catch (CryptoPP::Exception &exception)
-    {
-        std::cerr << exception.what() << std::endl;
-        exit(1);
-    }
+    result.resize(data.size() + m_BlockSize);
+    EVP_EncryptUpdate(m_EncryptCTX, &result[0], &size, &data[0], data.size());
+    result.resize(size);
 
-    std::cout << plain.size() << std::endl;
-    std::cout << cipher.size() << std::endl;
+    return result;
+}
 
-    return std::vector<unsigned char>(cipher.begin(), cipher.end());
+auto Cryptography::DecryptAES(std::vector<unsigned char> data) -> std::vector<unsigned char>
+{
+    std::vector<unsigned char> result;
+    int size = 0;
+
+    result.resize(data.size() + m_BlockSize);
+    EVP_DecryptUpdate(m_DecryptCTX, &result[0], &size, &data[0], data.size());
+    result.resize(size);
+    return result;
 }

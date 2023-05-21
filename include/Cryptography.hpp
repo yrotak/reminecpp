@@ -13,6 +13,11 @@ private:
 
     std::vector<unsigned char> m_publicKey;
 
+    EVP_CIPHER_CTX* m_EncryptCTX;
+    EVP_CIPHER_CTX* m_DecryptCTX;
+
+    unsigned int m_BlockSize;
+
 public:
     Cryptography();
     ~Cryptography();
@@ -24,7 +29,8 @@ public:
 
     auto EncryptRSA(std::vector<unsigned char> data) -> std::vector<unsigned char>;
 
-    auto EncryptData(std::vector<unsigned char> data) -> std::vector<unsigned char>;
+    auto EncryptAES(std::vector<unsigned char> data) -> std::vector<unsigned char>;
+    auto DecryptAES(std::vector<unsigned char> data) -> std::vector<unsigned char>;
 };
 
 
