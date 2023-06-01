@@ -12,6 +12,80 @@ Network::~Network()
 {
 }
 
+auto Network::HandleLogin(int packetid, PacketDecoder packetDecoder) -> void
+{
+    Game *gameInstance = Game::GetInstance();
+
+    switch (packetid)
+    {
+    case EPacketNameLoginCB::Disconnect:
+    {
+        CPacketDisconnect disconnect;
+        disconnect.FromPacketDecoder(packetDecoder);
+
+        std::cout << m_isCompressed << std::endl;
+
+        std::cout << disconnect.reason.ToPlainText() << std::endl;
+        break;
+    }
+    case EPacketNameLoginCB::EncryptionRequest:
+    {
+        CPacketEncryptionRequest encryptionreq;
+        encryptionreq.FromPacketDecoder(packetDecoder);
+
+        m_cryptography->GenerateKey();
+
+        m_cryptography->SetPublicKey(encryptionreq.pubkey);
+
+        std::string hash = m_cryptography->GenerateAuthHash(encryptionreq.serverid);
+        gameInstance->m_auth->JoinServer(hash);
+
+        CPacketEncryptionResponse encryptionresp;
+        encryptionresp.sharedsecretlength = 128;
+        encryptionresp.sharedsecret = m_cryptography->GetEncryptedSharedSecret();
+        std::vector<unsigned char> veriftoken = m_cryptography->EncryptRSA(encryptionreq.veriftoken);
+
+        encryptionresp.veriftokenlength = 128;
+        encryptionresp.veriftoken = veriftoken;
+
+        Send(encryptionresp.GetData());
+        m_isEncrypted = true;
+        break;
+    }
+    case EPacketNameLoginCB::LoginSuccess:
+    {
+        std::cout << "Logged In" << std::endl;
+
+        CPacketLoginSuccess loginSuccess;
+        loginSuccess.FromPacketDecoder(packetDecoder);
+
+        m_state = ENetworkState::PlayState;
+
+        break;
+    }
+    case EPacketNameLoginCB::SetCompression:
+        std::cout << "Compression setup" << std::endl;
+        m_isCompressed = false;
+
+        break;
+    default:
+        break;
+    }
+}
+auto Network::HandlePlay(int packetid, PacketDecoder packetDecoder) -> void
+{
+    switch (packetid)
+    {
+    case EPacketNamePlayCB::Login:{
+        CPacketLogin packetLogin;
+        packetLogin.FromPacketDecoder(packetDecoder);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
 auto Network::ConnectToServer(std::string hostname, int port) -> void
 {
     std::cout << "Connecting to " << hostname << std::endl;
@@ -50,49 +124,21 @@ auto Network::ConnectToServer(std::string hostname, int port) -> void
     {
         std::vector<unsigned char> data = Receive();
         PacketDecoder decoder = PacketDecoder(data.data(), data.size());
-        int packetsize = decoder.ReadVarInt();
+
+        /* if (!m_isCompressed) */
+
+        /* int size = decoder.ReadVarInt(); */
         int packetid = decoder.ReadVarInt();
 
-        switch (packetid)
+        std::cout << "packetid " << std::hex << packetid << std::endl;
+
+        switch (m_state)
         {
-        case EPacketNameLoginCB::Disconnect:
-        {
-            CPacketDisconnect disconnect;
-            disconnect.FromPacketDecoder(decoder);
-
-            std::cout << disconnect.reason.ToPlainText() << std::endl;
+        case ENetworkState::LoginState:
+            HandleLogin(packetid, decoder);
             break;
-        }
-        case EPacketNameLoginCB::EncryptionRequest:
-        {
-            CPacketEncryptionRequest encryptionreq;
-            encryptionreq.FromPacketDecoder(decoder);
-
-            m_cryptography->GenerateKey();
-
-            m_cryptography->SetPublicKey(encryptionreq.pubkey);
-
-            std::string hash = m_cryptography->GenerateAuthHash(encryptionreq.serverid);
-            gameInstance->m_auth->JoinServer(hash);
-
-            CPacketEncryptionResponse encryptionresp;
-            encryptionresp.sharedsecretlength = 128;
-            encryptionresp.sharedsecret = m_cryptography->GetEncryptedSharedSecret();
-            std::vector<unsigned char> veriftoken = m_cryptography->EncryptRSA(encryptionreq.veriftoken);
-
-            encryptionresp.veriftokenlength = 128;
-            encryptionresp.veriftoken = veriftoken;
-
-            Send(encryptionresp.GetData());
-            m_isEncrypted = true;
-            break;
-        }
-        case EPacketNameLoginCB::LoginSuccess:
-            /* code */
-            break;
-        case EPacketNameLoginCB::SetCompression:
-            /* code */
-            std::cout << "Compression not implemented" << std::endl;
+        case ENetworkState::PlayState:
+            HandlePlay(packetid, decoder);
             break;
         default:
             break;
@@ -106,14 +152,56 @@ auto Network::Send(std::vector<unsigned char> data) -> void
 }
 auto Network::Receive() -> std::vector<unsigned char>
 {
-    char buffer[1024];
-    int res = SDLNet_TCP_Recv(tcpsock, buffer, sizeof(buffer));
+    int size = PacketDecoder::ReadSizeFromSocket(tcpsock, m_cryptography, m_isEncrypted);
+
+    unsigned char *buffer = new unsigned char[size];
+    memset(buffer, 0, size);
+    int res = SDLNet_TCP_Recv(tcpsock, buffer, size);
     if (res == -1)
         std::cout << SDLNet_GetError() << std::endl;
-    if (!m_isEncrypted)
+
+    std::vector<unsigned char> data(buffer, buffer + size);
+
+    if (m_isEncrypted)
+        data = m_cryptography->DecryptAES(data);
+
+    if (m_isCompressed)
     {
-        return std::vector<unsigned char>(buffer, buffer + sizeof(buffer));
-    } else {
-        return m_cryptography->DecryptAES(std::vector<unsigned char>(buffer, buffer + sizeof(buffer)));
+        PacketDecoder packetCompress(data.data(), data.size());
+        int packetsize = packetCompress.ReadVarInt();
+        int uncrompressedsize = packetCompress.ReadVarInt();
+
+        std::cout << "size last " << packetCompress.m_lastSize << std::endl;
+        std::cout << "size " << packetsize - packetCompress.m_lastSize << std::endl;
+
+        std::cout << "packetsize " << packetsize << std::endl;
+        std::cout << "uncrompressedsize " << uncrompressedsize << std::endl;
+
+        /* std::cout << "new packet " << std::endl;
+        std::copy(
+            data.begin(),
+            data.end(),
+            std::ostream_iterator<int>(std::cout, ", ")); */
+
+        std::vector<unsigned char> compressedData = packetCompress.ReadByteArray(packetsize - packetCompress.m_lastSize);
+        /* std::cout << "compressed " << std::endl;
+        std::copy(
+            compressedData.begin(),
+            compressedData.end(),
+            std::ostream_iterator<int>(std::cout, ", ")); */
+        data = m_cryptography->Decompress(compressedData, uncrompressedsize);
+        std::copy(
+            data.begin(),
+            data.end(),
+            std::ostream_iterator<int>(std::cout, ", "));
     }
+    /* std::ofstream f("file.txt", std::ios_base::app);
+    f << std::hex << "\nNew packet: \n";
+    std::copy(
+        data.begin(),
+        data.end(),
+        std::ostream_iterator<int>(f, ", "));
+    f.close(); */
+
+    return data;
 }

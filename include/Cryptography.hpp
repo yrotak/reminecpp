@@ -31,6 +31,9 @@ public:
 
     auto EncryptAES(std::vector<unsigned char> data) -> std::vector<unsigned char>;
     auto DecryptAES(std::vector<unsigned char> data) -> std::vector<unsigned char>;
+
+    auto Compress(std::vector<unsigned char> data) -> std::vector<unsigned char>;
+    auto Decompress(std::vector<unsigned char> data, size_t decompressSize) -> std::vector<unsigned char>;
 };
 
 

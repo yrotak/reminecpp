@@ -38,6 +38,8 @@
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
 
+#include <zlib.h>
+
 #include <curl/curl.h>
 
 #ifdef _WIN32

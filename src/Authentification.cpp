@@ -34,7 +34,7 @@ auto Authentification::PostData(std::string url, std::string contentType, std::s
 
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 1L);
 
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData.data());
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData.c_str());
 
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &to_return);
@@ -44,8 +44,17 @@ auto Authentification::PostData(std::string url, std::string contentType, std::s
     if (code != CURLE_OK)
         std::cout << "curl error " << curl_easy_strerror(code) << std::endl;
 
+    long response_code;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
+
+
     curl_easy_cleanup(curl);
     curl_slist_free_all(headers);
+
+
+    if(response_code == 204) {
+        return "";
+    }
 
     return to_return;
 }
@@ -73,7 +82,7 @@ auto Authentification::LiveAuth(std::string authCode, bool refresh) -> std::stri
         postdata);
 
     auto jsonresp = json::parse(to_return);
-    Game* gameInstance = Game::GetInstance();
+    Game *gameInstance = Game::GetInstance();
     gameInstance->m_configManager->refreshToken = jsonresp["refresh_token"];
     gameInstance->m_configManager->WriteConfigFile();
     return jsonresp["access_token"];
@@ -258,10 +267,11 @@ auto Authentification::JoinServer(std::string hash) -> void
         {"selectedProfile", m_uuid},
         {"serverId", hash},
     };
-    std::string result = PostData(
-        "https://sessionserver.mojang.com/session/minecraft/join",
-        "application/json",
 
-        jsondata.dump()
-    );
+
+    PostData(
+    "https://sessionserver.mojang.com/session/minecraft/join",
+    "application/json",
+
+    jsondata.dump());
 }

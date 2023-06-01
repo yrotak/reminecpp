@@ -5,6 +5,7 @@
 #include "PacketDecoder.hpp"
 #include "Chat.hpp"
 
+
 class CPacketDisconnect : IPacket
 {
 public:

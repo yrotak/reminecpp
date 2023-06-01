@@ -14,9 +14,46 @@ PacketDecoder::~PacketDecoder()
 {
 }
 
+auto PacketDecoder::ReadSizeFromSocket(TCPsocket tcpsock, std::shared_ptr<Cryptography> crypto, bool isEncrypted) -> int
+{
+    unsigned char data[MAX_VARINT_LENGTH] = {0};
+    size_t dataLen = 0;
+    do
+    {
+        unsigned char tempdata[1];
+        int res = SDLNet_TCP_Recv(tcpsock, tempdata, 1);
+        if (res == -1)
+            std::cout << SDLNet_GetError() << std::endl;
+        std::vector<unsigned char> tempvec(tempdata, tempdata+sizeof(tempdata));
+        if(isEncrypted)
+            tempvec = crypto->DecryptAES(tempvec);
+        memcpy(&data[dataLen], tempvec.data(), 1);
+    } while ((data[dataLen++] & 0x80) != 0);
+
+    /* std::cout << "new packet " << std::endl;
+        std::copy(
+            data,
+            data+sizeof(data),
+            std::ostream_iterator<int>(std::cout, ", "));
+ */
+    int readed = 0;
+    int result = 0;
+    char read;
+    do
+    {
+        read = data[readed];
+        int value = (read & 0b01111111);
+        result |= (value << (7 * readed));
+        readed++;
+    } while ((read & 0b10000000) != 0);
+
+    return result;
+}
+
 auto PacketDecoder::ReadData(unsigned char *data, size_t size) -> void
 {
     memcpy(data, m_data.data() + m_readIndex, size);
+    m_lastSize = size;
     m_readIndex += size;
 }
 auto PacketDecoder::WriteData(unsigned char *data, size_t size) -> void
@@ -24,13 +61,14 @@ auto PacketDecoder::WriteData(unsigned char *data, size_t size) -> void
     m_data.insert(m_data.end(),
                   data,
                   data + size);
-    m_totalSize+=size;
+    m_lastSize = size;
+    m_totalSize += size;
 }
 auto PacketDecoder::GetDataLengthed() -> std::vector<unsigned char>
 {
     PacketDecoder p = PacketDecoder();
     p.WriteVarInt(m_totalSize);
-    std::vector<unsigned char> v =p.m_data;
+    std::vector<unsigned char> v = p.m_data;
     v.insert(v.end(), m_data.begin(), m_data.end());
     return v;
 }
@@ -119,7 +157,8 @@ auto PacketDecoder::ReadString() -> std::string
     return str;
 }
 
-auto PacketDecoder::ReadChat() -> Chat {
+auto PacketDecoder::ReadChat() -> Chat
+{
     /* std::string str, jsonStr = ReadString();
     nlohmann::json json;
     try {
@@ -298,7 +337,8 @@ auto PacketDecoder::WriteString(const std::string &value) -> void
     WriteData((unsigned char *)value.data(), value.size());
 }
 
-auto PacketDecoder::WriteChat(const Chat &value) -> void {
+auto PacketDecoder::WriteChat(const Chat &value) -> void
+{
     WriteString(value.ToJson());
 }
 

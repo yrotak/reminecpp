@@ -4,6 +4,7 @@
 #include "IPacket.hpp"
 #include "PacketDecoder.hpp"
 
+
 class CPacketEncryptionResponse : IPacket
 {
 public:

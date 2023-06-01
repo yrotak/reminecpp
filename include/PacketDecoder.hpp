@@ -6,6 +6,7 @@
 #include "Slot.hpp"
 #include "Utils.hpp"
 #include "Chat.hpp"
+#include "Cryptography.hpp"
 
 class PacketDecoder
 {
@@ -20,9 +21,14 @@ private:
 public:
     std::vector<unsigned char> m_data;
 
+    size_t m_lastSize = 0;
+
     PacketDecoder();
     PacketDecoder(unsigned char *data, size_t size);
     ~PacketDecoder();
+    
+
+    static auto ReadSizeFromSocket(TCPsocket tcpsock, std::shared_ptr<Cryptography> crypto, bool isEncrypted) -> int;
 
     auto ReadBool()                    -> bool;
     auto ReadByte()                    -> signed char;
