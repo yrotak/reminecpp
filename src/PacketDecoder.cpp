@@ -231,7 +231,7 @@ auto PacketDecoder::ReadSlot() -> SlotDataType
 
 auto PacketDecoder::ReadNbtTag() -> std::vector<unsigned char>
 {
-    std::cout << "Reading NBT is not implemented" << std::endl;
+    new Nbt(this);
     return std::vector<unsigned char>();
 }
 

@@ -8,6 +8,9 @@
 #include "Chat.hpp"
 #include "Cryptography.hpp"
 
+#include "Nbt.hpp"
+
+
 class PacketDecoder
 {
 private:

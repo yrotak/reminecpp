@@ -15,6 +15,9 @@ auto CPacketLogin::FromPacketDecoder(PacketDecoder packet) -> void
     for(int i = 0; i < dimensionCount; i++) {
         dimensionNames.push_back(packet.ReadString());
     }
+
+    packet.ReadNbtTag();
+    exit(0);
 }
 
 auto CPacketLogin::GetPacketId() -> int

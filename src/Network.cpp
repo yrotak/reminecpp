@@ -195,13 +195,13 @@ auto Network::Receive() -> std::vector<unsigned char>
             data.end(),
             std::ostream_iterator<int>(std::cout, ", "));
     }
-    /* std::ofstream f("file.txt", std::ios_base::app);
+    std::ofstream f("file.txt", std::ios_base::app);
     f << std::hex << "\nNew packet: \n";
     std::copy(
         data.begin(),
         data.end(),
-        std::ostream_iterator<int>(f, ", "));
-    f.close(); */
+        std::ostream_iterator<int>(f, ""));
+    f.close();
 
     return data;
 }
