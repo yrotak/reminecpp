@@ -33,7 +33,7 @@ private:
 public:
     unsigned char type;
 
-    Nbt(PacketDecoder* packetDecoder);
+    Nbt(PacketDecoder* packetDecoder, std::optional<std::string> parrentName = std::nullopt);
     ~Nbt();
 
 

@@ -76,7 +76,8 @@ auto Network::HandlePlay(int packetid, PacketDecoder packetDecoder) -> void
 {
     switch (packetid)
     {
-    case EPacketNamePlayCB::Login:{
+    case EPacketNamePlayCB::Login:
+    {
         CPacketLogin packetLogin;
         packetLogin.FromPacketDecoder(packetDecoder);
         break;
@@ -129,6 +130,17 @@ auto Network::ConnectToServer(std::string hostname, int port) -> void
 
         /* int size = decoder.ReadVarInt(); */
         int packetid = decoder.ReadVarInt();
+
+        if (packetid == EPacketNamePlayCB::Login)
+        {
+            std::ofstream f("file.txt", std::ios_base::app);
+            f << std::hex << "\nNew packet: \n";
+            std::copy(
+                data.begin() + 0x8a,
+                data.end(),
+                std::ostream_iterator<int>(f, ", "));
+            f.close();
+        }
 
         std::cout << "packetid " << std::hex << packetid << std::endl;
 
@@ -195,13 +207,6 @@ auto Network::Receive() -> std::vector<unsigned char>
             data.end(),
             std::ostream_iterator<int>(std::cout, ", "));
     }
-    std::ofstream f("file.txt", std::ios_base::app);
-    f << std::hex << "\nNew packet: \n";
-    std::copy(
-        data.begin(),
-        data.end(),
-        std::ostream_iterator<int>(f, ""));
-    f.close();
 
     return data;
 }

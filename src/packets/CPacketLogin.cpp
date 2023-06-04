@@ -17,6 +17,9 @@ auto CPacketLogin::FromPacketDecoder(PacketDecoder packet) -> void
     }
 
     packet.ReadNbtTag();
+
+    std::cout << packet.ReadString() << std::endl;
+
     exit(0);
 }
 

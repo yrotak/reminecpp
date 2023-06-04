@@ -14,7 +14,6 @@
 class PacketDecoder
 {
 private:
-    int m_readIndex = 0;
 
     size_t m_totalSize = 0;
 
@@ -23,6 +22,7 @@ private:
 
 public:
     std::vector<unsigned char> m_data;
+    int m_readIndex = 0;
 
     size_t m_lastSize = 0;
 
