@@ -30,12 +30,16 @@ private:
 
     std::string name;
     size_t size;
+
+    size_t listSize;
+    std::vector<unsigned char> data;
 public:
     unsigned char type;
 
-    Nbt(PacketDecoder* packetDecoder, std::optional<std::string> parrentName = std::nullopt);
+    Nbt(PacketDecoder* packetDecoder, std::optional<unsigned char> typeChild = std::nullopt);
     ~Nbt();
 
+    auto ToString() -> std::string;
 
 };
 

@@ -12,15 +12,26 @@ auto CPacketLogin::FromPacketDecoder(PacketDecoder packet) -> void
     previousGameMode = packet.ReadByte();
     dimensionCount = packet.ReadVarInt();
 
-    for(int i = 0; i < dimensionCount; i++) {
+    for (int i = 0; i < dimensionCount; i++)
+    {
         dimensionNames.push_back(packet.ReadString());
     }
 
     packet.ReadNbtTag();
 
-    std::cout << packet.ReadString() << std::endl;
+    dimensionType = packet.ReadString();
+    dimensionName = packet.ReadString();
 
-    exit(0);
+    hashSeed = packet.ReadLong();
+    maxPlayers = packet.ReadVarInt();
+    viewDistance = packet.ReadVarInt();
+    simulationDistance = packet.ReadVarInt();
+    reducedDebugInfo = packet.ReadBool();
+    enableRespawnScreen = packet.ReadBool();
+    isDebug = packet.ReadBool();
+    isFlat = packet.ReadBool();
+    hasDeathLocation = packet.ReadBool();
+
 }
 
 auto CPacketLogin::GetPacketId() -> int

@@ -18,6 +18,19 @@ public:
     char previousGameMode;
     int dimensionCount;
     std::vector<std::string> dimensionNames;
+
+    std::string dimensionType;
+    std::string dimensionName;
+    long hashSeed;
+    int maxPlayers;
+    int viewDistance;
+    int simulationDistance;
+    bool reducedDebugInfo;
+    bool enableRespawnScreen;
+    bool isDebug;
+    bool isFlat;
+    bool hasDeathLocation;
+    
 };
 
 #endif

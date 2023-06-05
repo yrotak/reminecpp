@@ -10,6 +10,7 @@
 
 #include "Nbt.hpp"
 
+class Nbt;
 
 class PacketDecoder
 {
@@ -48,7 +49,7 @@ public:
     auto ReadVarLong()                 -> long long;
     auto ReadEntityMetadata()          -> std::vector<unsigned char>;
     auto ReadSlot()                    -> SlotDataType;
-    auto ReadNbtTag()                  -> std::vector<unsigned char>;
+    auto ReadNbtTag()                  -> Nbt*;
     auto ReadPosition()                -> glm::vec3;
     auto ReadAngle()                   -> unsigned char;
     auto ReadUuid()                    -> std::vector<unsigned char>;
