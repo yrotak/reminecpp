@@ -6,9 +6,6 @@ auto CPacketChunkData::GetData() -> std::vector<unsigned char>
 }
 auto CPacketChunkData::FromPacketDecoder(PacketDecoder packet) -> void
 {
-    flags = packet.ReadByte();
-    flyingSpeed = packet.ReadFloat();
-    fovModifier = packet.ReadFloat();
 }
 
 auto CPacketChunkData::GetPacketId() -> int
