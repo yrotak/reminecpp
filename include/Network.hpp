@@ -10,6 +10,10 @@
 #include "packets/CPacketDisconnect.hpp"
 #include "packets/CPacketLoginSuccess.hpp"
 #include "packets/CPacketLogin.hpp"
+#include "packets/CPacketPluginMessageCB.hpp"
+#include "packets/CPacketClientInformation.hpp"
+#include "packets/CPacketSetHeldItem.hpp"
+#include "packets/CPacketPlayerAbilities.hpp"
 #include "Cryptography.hpp"
 
 #include "Game.hpp"

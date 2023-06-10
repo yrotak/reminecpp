@@ -80,9 +80,43 @@ auto Network::HandlePlay(int packetid, PacketDecoder packetDecoder) -> void
     {
         CPacketLogin packetLogin;
         packetLogin.FromPacketDecoder(packetDecoder);
+
+        CPacketClientInformation clientInfos;
+        clientInfos.locale = "en_GB";
+        clientInfos.viewDistance = (char)10;
+        clientInfos.chatMode = 0;
+        clientInfos.chatColors = true;
+        clientInfos.displayedSkinPart = 0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40;
+        clientInfos.mainHand = 1;
+        clientInfos.textFiltering = false;
+        clientInfos.serverListings = true;
+
+        Send(clientInfos.GetData());
+        break;
+    }
+    case EPacketNamePlayCB::PluginMessageCB:
+    {
+        CPacketPluginMessageCB packetPluginMessage;
+        packetPluginMessage.FromPacketDecoder(packetDecoder);
+
+        break;
+    }
+    case EPacketNamePlayCB::SetHeldItem:
+    {
+        CPacketSetHeldItem setHeldItem;
+        setHeldItem.FromPacketDecoder(packetDecoder);
+
+        break;
+    }
+    case EPacketNamePlayCB::PlayerAbilities:
+    {
+        CPacketPlayerAbilities playerAbilities;
+        playerAbilities.FromPacketDecoder(packetDecoder);
+
         break;
     }
     default:
+        std::cout << "packetid " << std::hex << packetid << std::endl;
         break;
     }
 }
@@ -130,8 +164,6 @@ auto Network::ConnectToServer(std::string hostname, int port) -> void
 
         /* int size = decoder.ReadVarInt(); */
         int packetid = decoder.ReadVarInt();
-
-        std::cout << "packetid " << std::hex << packetid << std::endl;
 
         switch (m_state)
         {
