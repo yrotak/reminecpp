@@ -229,10 +229,9 @@ auto PacketDecoder::ReadSlot() -> SlotDataType
     return slot;
 }
 
-auto PacketDecoder::ReadNbtTag() -> std::vector<unsigned char>
+auto PacketDecoder::ReadNbtTag() -> Nbt*
 {
-    new Nbt(this);
-    return std::vector<unsigned char>();
+    return new Nbt(this);
 }
 
 auto PacketDecoder::ReadPosition() -> glm::vec3

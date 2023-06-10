@@ -37,10 +37,11 @@ auto Game::PostInit() -> void
     /* std::thread([this] {
         this->m_network->ConnectToServer("127.0.0.1", 25565);
     }).detach(); */
-    /* this->m_render->RenderThread(); */
+    this->m_render->RenderThread();
 }
 
 Game::~Game()
 {
     this->m_isRunning = false;
+    std::cout << "deleted" << std::endl;
 }

@@ -189,8 +189,11 @@ auto Authentification::LoginWithMicrosoft() -> void
         std::string url = "https://login.live.com/oauth20_authorize.srf?response_type=code&client_id=" + m_appId + "&redirect_uri=http://localhost:1919/login&scope=XboxLive.signin+offline_access";
 #ifdef _WIN32
         ShellExecute(NULL, "open", url.c_str(), NULL, NULL, SW_SHOWNORMAL);
-#else
+#elif __APPLE__
         std::string command = "open \"" + url + "\"";
+        system(command.c_str());
+#elif __linux
+        std::string command = "xdg-open \"" + url + "\"";
         system(command.c_str());
 #endif
 

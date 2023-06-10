@@ -23,7 +23,7 @@ auto Network::HandleLogin(int packetid, PacketDecoder packetDecoder) -> void
         CPacketDisconnect disconnect;
         disconnect.FromPacketDecoder(packetDecoder);
 
-        std::cout << m_isCompressed << std::endl;
+        std::cout << "disconnect is compr; " << m_isCompressed << std::endl;
 
         std::cout << disconnect.reason.ToPlainText() << std::endl;
         break;
@@ -130,17 +130,6 @@ auto Network::ConnectToServer(std::string hostname, int port) -> void
 
         /* int size = decoder.ReadVarInt(); */
         int packetid = decoder.ReadVarInt();
-
-        if (packetid == EPacketNamePlayCB::Login)
-        {
-            std::ofstream f("file.txt", std::ios_base::app);
-            f << std::hex << "\nNew packet: \n";
-            std::copy(
-                data.begin() + 0x8a,
-                data.end(),
-                std::ostream_iterator<int>(f, ", "));
-            f.close();
-        }
 
         std::cout << "packetid " << std::hex << packetid << std::endl;
 

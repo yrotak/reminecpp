@@ -5,6 +5,8 @@ project(reminecpp)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+
 find_package(SDL2 REQUIRED)
 find_package(SDL2_net REQUIRED)
 find_package(OpenGL REQUIRED)
