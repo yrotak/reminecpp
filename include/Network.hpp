@@ -45,7 +45,7 @@ public:
     auto ConnectToServer(std::string hostname, int port) -> void;
 
     auto Send(std::vector<unsigned char> data) -> void;
-    auto Receive() -> std::vector<unsigned char>;
+    auto Receive() -> std::optional<std::vector<unsigned char>>;
 };
 
 #endif

@@ -16,6 +16,8 @@ PacketDecoder::~PacketDecoder()
 
 auto PacketDecoder::ReadSizeFromSocket(TCPsocket tcpsock, std::shared_ptr<Cryptography> crypto, bool isEncrypted) -> int
 {
+    auto f2 = std::ofstream("final.txt", std::ios::app);
+    f2 << std::hex;
     unsigned char data[MAX_VARINT_LENGTH] = {0};
     size_t dataLen = 0;
     do
@@ -27,8 +29,16 @@ auto PacketDecoder::ReadSizeFromSocket(TCPsocket tcpsock, std::shared_ptr<Crypto
         std::vector<unsigned char> tempvec(tempdata, tempdata+sizeof(tempdata));
         if(isEncrypted)
             tempvec = crypto->DecryptAES(tempvec);
+        std::copy(
+            tempvec.begin(),
+            tempvec.end(),
+            std::ostream_iterator<int>(f2, ", ")
+        );
         memcpy(&data[dataLen], tempvec.data(), 1);
     } while ((data[dataLen++] & 0x80) != 0);
+
+
+    f2.close();
 
     /* std::cout << "new packet " << std::endl;
         std::copy(
@@ -52,7 +62,10 @@ auto PacketDecoder::ReadSizeFromSocket(TCPsocket tcpsock, std::shared_ptr<Crypto
 
 auto PacketDecoder::ReadData(unsigned char *data, size_t size) -> void
 {
-    memcpy(data, m_data.data() + m_readIndex, size);
+    if(m_data.begin() + m_readIndex >= m_data.end())
+        memset(data, 0, size);
+    else
+        memcpy(data, m_data.data() + m_readIndex, size);
     m_lastSize = size;
     m_readIndex += size;
 }

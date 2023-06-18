@@ -157,13 +157,26 @@ auto Network::ConnectToServer(std::string hostname, int port) -> void
 
     while (true)
     {
-        std::vector<unsigned char> data = Receive();
+        auto received = Receive();
+        if(!received.has_value()) {
+            continue;
+        }
+        std::vector<unsigned char> data = received.value();
         PacketDecoder decoder = PacketDecoder(data.data(), data.size());
 
         /* if (!m_isCompressed) */
 
         /* int size = decoder.ReadVarInt(); */
         int packetid = decoder.ReadVarInt();
+
+        auto f = std::ofstream("tt.txt", std::ios::app);
+        f << "size: " << data.size() << std::hex << " packetid: " << packetid << std::endl;
+        f.close();
+
+        if(packetid > 0xFF) {
+            std::cout << "invalid packet id" << std::endl;
+            exit(0);
+        }
 
         switch (m_state)
         {
@@ -183,9 +196,15 @@ auto Network::Send(std::vector<unsigned char> data) -> void
 {
     SDLNet_TCP_Send(tcpsock, data.data(), data.size());
 }
-auto Network::Receive() -> std::vector<unsigned char>
+auto Network::Receive() -> std::optional<std::vector<unsigned char>>
 {
+    auto f2 = std::ofstream("final.txt", std::ios::app);
+    f2 << "new packet: " << std::hex;
+    f2.close();
     int size = PacketDecoder::ReadSizeFromSocket(tcpsock, m_cryptography, m_isEncrypted);
+
+
+    if(size == 0) return std::nullopt;
 
     unsigned char *buffer = new unsigned char[size];
     memset(buffer, 0, size);
@@ -228,6 +247,14 @@ auto Network::Receive() -> std::vector<unsigned char>
             data.end(),
             std::ostream_iterator<int>(std::cout, ", "));
     }
+    f2 = std::ofstream("final.txt", std::ios::app);
+    std::copy(
+        data.begin(),
+        data.end(),
+        std::ostream_iterator<int>(f2, ", ")
+    );
+    f2 << std::endl;
+    f2.close();
 
-    return data;
+    return std::make_optional(data);
 }
