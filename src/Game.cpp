@@ -33,10 +33,10 @@ auto Game::PostInit() -> void
 
     this->m_configManager->ReadConfigFile();
     this->m_auth->LoginWithMicrosoft();
-    this->m_network->ConnectToServer("127.0.0.1", 25565);
-    /* std::thread([this] {
+    /* this->m_network->ConnectToServer("127.0.0.1", 25565); */
+    std::thread([this] {
         this->m_network->ConnectToServer("127.0.0.1", 25565);
-    }).detach(); */
+    }).detach();
     this->m_render->RenderThread();
 }
 

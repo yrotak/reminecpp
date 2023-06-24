@@ -24,7 +24,7 @@ private:
 
     std::chrono::time_point<std::chrono::steady_clock> lastTime = std::chrono::steady_clock::now();
 
-    void CalculateFrameRate()
+    int CalculateFrameRate()
     {
         auto currentTime = std::chrono::steady_clock::now();
 
@@ -37,8 +37,9 @@ private:
             fps = _fpsCount;
             _fpsCount = 0;
 
-            std::cout << fps << std::endl;
+            return fps;
         }
+        return -1;
     }
 
 public:

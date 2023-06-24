@@ -175,7 +175,7 @@ auto Network::ConnectToServer(std::string hostname, int port) -> void
 
         if(packetid > 0xFF) {
             std::cout << "invalid packet id" << std::endl;
-            exit(0);
+            while(true);
         }
 
         switch (m_state)
@@ -248,6 +248,7 @@ auto Network::Receive() -> std::optional<std::vector<unsigned char>>
             std::ostream_iterator<int>(std::cout, ", "));
     }
     f2 = std::ofstream("final.txt", std::ios::app);
+    f2 << "|" << std::hex;
     std::copy(
         data.begin(),
         data.end(),
