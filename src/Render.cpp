@@ -63,7 +63,6 @@ auto Render::Init() -> void
 
     // glEnable( GL_MULTISAMPLE );
     //  glEnable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
 
     std::cout << "Inits" << std::endl;
 
