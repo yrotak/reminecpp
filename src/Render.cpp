@@ -61,8 +61,8 @@ auto Render::Init() -> void
     // Set VSYNC swap interval
     SDL_GL_SetSwapInterval(1);
 
-    // glEnable( GL_MULTISAMPLE );
-    //  glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_CULL_FACE);
 
     std::cout << "Inits" << std::endl;
 
@@ -94,7 +94,7 @@ auto Render::RenderThread() -> void
     {
         for (int j = 0; j < 16; j++)
         {
-            for (int k = 0; k < 256; k++)
+            for (int k = 0; k < 16; k++)
             {
                 Game::GetInstance()->m_currentWorld->setBlock(glm::vec3(i, k, j), "minecraft:stone");
             }

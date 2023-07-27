@@ -32,11 +32,11 @@ auto Game::PostInit() -> void
     m_currentWorld = std::make_unique<World>();
 
     this->m_configManager->ReadConfigFile();
-    this->m_auth->LoginWithMicrosoft();
+    /* this->m_auth->LoginWithMicrosoft(); */
     /* this->m_network->ConnectToServer("127.0.0.1", 25565); */
-    std::thread([this] {
+    /* std::thread([this] {
         this->m_network->ConnectToServer("127.0.0.1", 25565);
-    }).detach();
+    }).detach(); */
     this->m_render->RenderThread();
 }
 

@@ -35,5 +35,9 @@ target_include_directories("imgui" PRIVATE "${IMGUI_DIR}" ${SDL2_INCLUDE_DIRS})
 target_link_libraries(game PRIVATE ${SDL2_LIBRARIES} SDL2_net OpenGL::GL GLEW::GLEW glm::glm cryptopp ${CURL_LIBRARIES} OpenSSL::SSL ZLIB::ZLIB imgui)
 
 if(UNIX AND NOT APPLE)
+    target_link_libraries(game PRIVATE ${CMAKE_DL_LIBS})
+endif()
+
+if(UNIX AND NOT APPLE)
 target_link_libraries(game PRIVATE pthread)
 endif()
